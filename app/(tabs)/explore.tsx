@@ -15,7 +15,7 @@ export default function TabTwoScreen() {
         <IconSymbol
           size={310}
           color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
+          name="person.fill.checkmark"
           style={styles.headerImage}
         />
       }>

@@ -1,17 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import SessionView from '@/components/SessionView';
-import { useLocalSearchParams } from 'expo-router';
+import Stopwatch from '@/components/Stopwatch';
+import { SessionContext } from '@/contexts/SessionContext';
+import { Button } from 'react-native-paper';
 
 export default function HomeScreen() {
 
-  // const params = useLocalSearchParams();
-  // const { sessionName } = params;
-
-  const [session, setSession] = useState<Session>();
+  const seshState = useContext(SessionContext);
+  const session = seshState.session;
+  console.log('curr sesh', session);
 
   const NoSession = () => {
     return (
@@ -19,6 +20,7 @@ export default function HomeScreen() {
       <ThemedText>
         No active session, navigate to the `Session Maker Tab` to get started!
       </ThemedText>
+      <Button mode="contained" onPress={() => {}} >print past sessions</Button>
     </ThemedView>
     )
   }
@@ -69,7 +71,7 @@ export default function HomeScreen() {
       }>
       <ThemedView>
         <ThemedText type='title'>ChatterBox</ThemedText>
-        {session ? <SessionView /> : <NoSession /> }
+        {session && session.active ? <SessionView /> : <NoSession /> }
       </ThemedView>
     </ParallaxScrollView>
   );
