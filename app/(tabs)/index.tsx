@@ -12,13 +12,13 @@ export default function HomeScreen() {
 
   const seshState = useContext(SessionContext);
   const session = seshState.session;
-  console.log('curr sesh', session);
+  // console.log('curr sesh', session);
 
   const NoSession = () => {
     return (
       <ThemedView>
       <ThemedText>
-        No active session, navigate to the `Session Maker Tab` to get started!
+        No active session, navigate to the `Session Maker` tab to get started!
       </ThemedText>
       <Button mode="contained" onPress={() => {}} >print past sessions</Button>
     </ThemedView>
