@@ -27,7 +27,6 @@ export default function SessionView() {
     <ThemedView>
       <ThemedText>welcome {username} to the session: {session?.name}</ThemedText>
       <Stopwatch sendTime={handleStopwatchTime} />
-      <ThemedText>{duration}</ThemedText>
       <Button mode='contained' style={{width: 150}} onPress={endSession}>
         End session!
       </Button>

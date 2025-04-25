@@ -97,14 +97,15 @@ export function SessionProvider({ children }: PropsWithChildren) {
             if (value !== null) {
                 const sessions = JSON.parse(value);
                 // console.log('all sessions', sessions);
-                const active_sesh = sessions.filter((a: Session) => a.active === true);
+                const active_sesh = sessions.filter((a: Session) => a.active === true)[0];
+                // console.log(active_sesh);
                 setAllSessions(sessions);
                 setSession(active_sesh);
             }
           } catch (error) {
             console.log("Error fetching from storage", error);
-          }
-          setIsReady(true);
+          } 
+            setIsReady(true);
         };
         getSeshFromStorage();
       }, []);

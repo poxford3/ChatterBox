@@ -15,7 +15,7 @@ export default function Stopwatch({ sendTime }: sendProps) {
     const startTimeRef = useRef(0);
 
     const handleTimeRequest = () => {
-      console.log('handle inside', time);
+      // console.log('handle inside', time);
       sendTime(time);
     }
 

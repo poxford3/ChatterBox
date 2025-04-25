@@ -25,41 +25,6 @@ export default function HomeScreen() {
     )
   }
 
-  // useEffect(() => {
-  //   const fakeUser: User = {
-  //     name: "temp name",
-  //     password: "temp pass",
-  //     email: "temp email"
-  // }
-  // const newSesh: Session = {
-  //     name: sessionName as string,
-  //     date: new Date(),
-  //     users: [fakeUser]
-  // }
-
-  // setSession(newSesh);
-  // }, [])
-
-  // test session on screens
-  // useEffect(() => {
-    // const tempUser: User = {
-    //   name: "t user",
-    //   password: "t pass",
-    //   email: "t email"
-    // };
-    // const temp: Session = {
-    //   name: "test",
-    //   date: new Date(),
-    //   users: [
-    //     tempUser
-    //   ]
-    // };
-  //   setTimeout(() => {
-  //     setSession(temp);
-  //     console.log('temp set')
-  //   }, 3000);
-  // }, [])
-
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
