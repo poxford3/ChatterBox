@@ -21,11 +21,16 @@ type finishSeshProps = {
     duration: number, // in milliseconds
 }
 
+type deleteSeshProps = {
+    sesh_id: string
+}
+
 type SessionState = {
     session: Session | null,
     allSessions: Session[] | null
     createSession: ({ name, users }: createSeshProps) => void;
     finishSession: ({ duration }: finishSeshProps) => void;
+    deleteSession: ({ sesh_id }: deleteSeshProps) => void
 }
 
 const sessionStorageKey = "sesh-key";
@@ -34,7 +39,8 @@ export const SessionContext = createContext<SessionState>({
     session: null,
     allSessions: null,
     createSession: () => {},
-    finishSession: () => {}
+    finishSession: () => {},
+    deleteSession: () => {},
 });
 
 export function SessionProvider({ children }: PropsWithChildren) {
@@ -43,20 +49,39 @@ export function SessionProvider({ children }: PropsWithChildren) {
     const [allSessions, setAllSessions] = useState<Session[] | null>(null);
     const router = useRouter();
 
-    const storeSessionState = async (newState: { session: Session }) => {
-        try {
-            // check if the session already exists
-            const tempAllSessions: Session[] = allSessions ?? [];
-            const updatedSessions = tempAllSessions.some(s => s.id === newState.session.id)
-            ? tempAllSessions.map(s => (s.id === newState.session.id ? newState.session : s))
-            : [...tempAllSessions, newState.session];
-      
-            setAllSessions(updatedSessions);
-            const allSessionsJson = JSON.stringify(updatedSessions);
-            // console.log('store', allSessionsJson);
-            await AsyncStorage.setItem(sessionStorageKey, allSessionsJson);
-        } catch (error) {
-            console.log("error storing session state", error);
+    type storeSeshProps = {
+        newState?: Session,
+        sessions?: Session[]
+    }
+
+    const storeSessionState = async ({newState, sessions}: storeSeshProps) => {
+
+        let allSessionsJson;
+
+        if (newState) {
+            try {
+                // check if the session already exists
+                const tempAllSessions: Session[] = allSessions ?? [];
+                const updatedSessions = tempAllSessions.some(s => s.id === newState.id)
+                ? tempAllSessions.map(s => (s.id === newState.id ? newState : s))
+                : [...tempAllSessions, newState];
+          
+                setAllSessions(updatedSessions);
+                allSessionsJson = JSON.stringify(updatedSessions);
+                // console.log('store', allSessionsJson);
+                await AsyncStorage.setItem(sessionStorageKey, allSessionsJson);
+            } catch (error) {
+                console.log("error storing session state", error);
+            }
+        } else if (sessions) {
+            try {
+                // check if the session already exists
+                allSessionsJson = JSON.stringify(sessions);
+                // console.log('store', allSessionsJson);
+                await AsyncStorage.setItem(sessionStorageKey, allSessionsJson);
+            } catch (error) {
+                console.log("error storing session state", error);
+            }
         }
     }
 
@@ -71,7 +96,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
                 duration: 0,
                 users: users
             }
-            storeSessionState({ session: newSesh });
+            storeSessionState({ newState: newSesh });
             setSession(newSesh);
             router.replace("/");
         } else if (session.active === true) {
@@ -85,8 +110,18 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
         session.duration = duration;
         session.active = false;
-        storeSessionState({ session: session });
+        storeSessionState({ newState: session });
         setSession(null);
+    }
+
+    const deleteSession = ({ sesh_id }: deleteSeshProps) => {
+        if (!allSessions) return;
+
+        const sessions = allSessions;
+        const new_sessions = sessions?.filter((sesh) => sesh.id !== sesh_id);
+
+        setAllSessions(new_sessions);
+        storeSessionState({ sessions: new_sessions });
     }
 
     useEffect(() => {
@@ -123,6 +158,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
                 allSessions,
                 createSession,
                 finishSession,
+                deleteSession,
             }}
         >
             {children}
