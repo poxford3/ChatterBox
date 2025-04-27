@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
-import { ThemedText } from '@/components/ThemedText'
-import { ThemedView } from '@/components/ThemedView'
-import ParallaxScrollView from '@/components/ParallaxScrollView'
-import { IconSymbol } from '@/components/ui/IconSymbol'
-import { SessionContext } from '@/contexts/SessionContext'
+import { Alert, Pressable } from 'react-native';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
+import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import { SessionContext } from '@/contexts/SessionContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { Alert, Pressable } from 'react-native'
 
 export default function Sessions() {
 
@@ -35,6 +35,7 @@ export default function Sessions() {
         <ThemedView style={{ borderColor: borderColor, borderWidth: 1, borderRadius: 10, padding: 10, marginVertical: 5}}>
             <Pressable onPress={() => twoButtonAlert({ id: sesh.id })}>
                 <ThemedText>name: {sesh.name}</ThemedText>
+                {/* <ThemedText>id: {sesh.id}</ThemedText> */}
                 <ThemedText>duration: {sesh.duration} milliseconds</ThemedText>
                 <ThemedText>active?: {sesh.active.toString()}</ThemedText>
                 <ThemedText>startDate: {sesh.date.toString()}</ThemedText>

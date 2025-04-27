@@ -17,11 +17,10 @@ export default function HomeScreen() {
   const NoSession = () => {
     return (
       <ThemedView>
-      <ThemedText>
-        No active session, navigate to the `Session Maker` tab to get started!
-      </ThemedText>
-      <Button mode="contained" onPress={() => {}} >print past sessions</Button>
-    </ThemedView>
+        <ThemedText>
+          No active session, navigate to the `Session Maker` tab to get started!
+        </ThemedText>
+      </ThemedView>
     )
   }
 

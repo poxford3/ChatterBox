@@ -4,6 +4,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import ProfilePic from '@/components/ProfilePic';
 
 export default function User() {
   return (
@@ -18,7 +19,8 @@ export default function User() {
         />
       }>
         <ThemedView>
-            <ThemedText>User!</ThemedText>
+            {/* <ThemedText>User!</ThemedText> */}
+            <ProfilePic />
         </ThemedView>
       </ParallaxScrollView>
   )
