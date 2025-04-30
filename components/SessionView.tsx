@@ -4,6 +4,9 @@ import { ThemedText } from './ThemedText';
 import { SessionContext } from '@/contexts/SessionContext';
 import { Button } from 'react-native-paper';
 import Stopwatch from './Stopwatch';
+import { StyleSheet, View } from 'react-native';
+import TapToTalk from './TapToTalk';
+import SpeakerPic from './SpeakerPic';
 
 export default function SessionView() {
 
@@ -24,12 +27,27 @@ export default function SessionView() {
   }
 
   return (
-    <ThemedView>
-      <ThemedText>welcome {username} to the session: {session?.name}</ThemedText>
+    <ThemedView style={styles.container}>
+      <ThemedText>welcome <ThemedText type='subtitle'>{username}</ThemedText> to the session:</ThemedText>
+      <ThemedText style={{ textDecorationLine: 'underline'}} type='subtitle'>{session?.name}</ThemedText>
       <Stopwatch sendTime={handleStopwatchTime} />
+      <TapToTalk />
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', padding: 10, }}>
+        <SpeakerPic />
+        <SpeakerPic />
+        <SpeakerPic />
+      </View>
       <Button mode='contained' style={{width: 150}} onPress={endSession}>
         End session!
       </Button>
     </ThemedView>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  }
+})

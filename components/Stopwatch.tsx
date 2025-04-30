@@ -1,5 +1,5 @@
-import { View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
+import { View, StyleSheet } from 'react-native'
 import { Button } from 'react-native-paper';
 import { ThemedText } from './ThemedText';
 
@@ -64,13 +64,19 @@ export default function Stopwatch({ sendTime }: sendProps) {
     }
 
   return (
-    <View >
+    <View style={{flex: 1, alignItems: 'center'}}>
       <ThemedText type='subtitle'>{formatTime(time)}</ThemedText>
-      <View style={{flexDirection: 'row', padding: 10, alignItems: 'center', justifyContent: 'space-evenly'}}>
-        {running ? null : <Button dark={true} icon={"play"} mode='contained' onPress={time > 0 ? resumeStopwatch : startStopwatch}>{time > 0 ? 'Resume' : 'Start'}</Button>}
-        {running ? <Button icon={"pause"} mode='contained' onPress={pauseStopwatch}>Pause</Button> : null}
-        {running ? null : <Button icon={"restart"} mode='contained' onPress={resetStopwatch}>Reset</Button>}
+      <View style={{flexDirection: 'row', padding: 10, justifyContent: 'space-evenly'}}>
+        {running ? null : <Button style={styles.btn} dark={true} icon={"play"} mode='contained' onPress={time > 0 ? resumeStopwatch : startStopwatch}>{time > 0 ? 'Resume' : 'Start'}</Button>}
+        {running ? <Button style={styles.btn} icon={"pause"} mode='contained' onPress={pauseStopwatch}>Pause</Button> : null}
+        {running ? null : <Button style={styles.btn} icon={"restart"} mode='contained' onPress={resetStopwatch}>Reset</Button>}
       </View>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  btn: {
+    marginHorizontal: 5,
+  }
+})

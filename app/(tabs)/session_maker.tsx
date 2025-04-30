@@ -5,7 +5,6 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { TextField } from '@/components/TextField';
 import { Button } from 'react-native-paper';
-import { router } from 'expo-router';
 import { SessionContext } from '@/contexts/SessionContext';
 
 export default function SessionMaker() {
@@ -27,29 +26,31 @@ export default function SessionMaker() {
 
     return (
     <ParallaxScrollView
-        headerBackgroundColor={{ light: '#6FC276', dark: '#4CA054' }}
+        // headerBackgroundColor={{ light: '#6FC276', dark: '#4CA054' }}
+        headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
         headerImage={
         <IconSymbol
             size={310}
-            color="#163418"
-            name="gym.bag"
+            color="#808080"
+            // color="#163418"
+            name="plus.app"
         //   style={styles.headerImage}
         />
         }>
         <ThemedView>
-            <ThemedText type='title'>Create a session here</ThemedText>
+            <ThemedText type='title'>New Session</ThemedText>
             <TextField 
                 value={sessionName}
-                placeholder='session name'
+                placeholder='Session Name'
                 onChangeText={setSessionName}
                 style={{margin: 5}}
             />
             <Button 
                 mode='contained'
-                icon={"camera"}
+                icon={"plus"}
                 onPress={submitForm}
             >
-                hiiii
+                Create Session
             </Button>
         </ThemedView>
     </ParallaxScrollView>

@@ -33,7 +33,7 @@ export default function HomeScreen() {
           style={styles.reactLogo}
         />
       }>
-      <ThemedView>
+      <ThemedView style={{padding: 10,}}>
         <ThemedText type='title'>ChatterBox</ThemedText>
         {session && session.active ? <SessionView /> : <NoSession /> }
       </ThemedView>
