@@ -1,0 +1,1 @@
+type SessionType = "weight" | "run" | "bike" | null 

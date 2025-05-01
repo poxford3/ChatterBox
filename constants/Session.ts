@@ -4,5 +4,7 @@ interface Session {
     duration: number // in milliseconds
     date: Date,
     active: boolean,
-    users: [User]
+    type: SessionType,
+    exercises?: Exercise[],
+    users: string[]
 }

@@ -4,7 +4,7 @@ import { ThemedText } from './ThemedText';
 import { SessionContext } from '@/contexts/SessionContext';
 import { Button } from 'react-native-paper';
 import Stopwatch from './Stopwatch';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import TapToTalk from './TapToTalk';
 import SpeakerPic from './SpeakerPic';
 
@@ -20,7 +20,8 @@ export default function SessionView() {
 
   const session = seshState.session;
   if (!session) return;
-  const username = session?.users[0].name
+  // const username = session?.users[0].name
+  const username = "change me"
 
   const endSession = () => {
     seshState.finishSession({ duration: duration })
@@ -32,11 +33,17 @@ export default function SessionView() {
       <ThemedText style={{ textDecorationLine: 'underline'}} type='subtitle'>{session?.name}</ThemedText>
       <Stopwatch sendTime={handleStopwatchTime} />
       <TapToTalk />
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', padding: 10, }}>
+      <ScrollView horizontal style={{flexDirection: 'row', padding: 10, borderWidth: 0}}>
         <SpeakerPic />
         <SpeakerPic />
         <SpeakerPic />
-      </View>
+        <SpeakerPic />
+        <SpeakerPic />
+        <SpeakerPic />
+        <SpeakerPic />
+        <SpeakerPic />
+        <SpeakerPic />
+      </ScrollView>
       <Button mode='contained' style={{width: 150}} onPress={endSession}>
         End session!
       </Button>

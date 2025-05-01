@@ -19,7 +19,8 @@ export default function SpeakerPic() {
         style={{
             borderColor: isSpeaking ? 'green' : undefined,
             borderWidth: isSpeaking ? 3 : 0.5,
-            borderRadius: iconSize / 2
+            borderRadius: iconSize / 2,
+            margin: 5,
         }}>
         <Image
             style={styles.pic}
@@ -30,7 +31,7 @@ export default function SpeakerPic() {
     )
 };
 
-const iconSize = 100;
+const iconSize = 80;
 const styles = StyleSheet.create({
     pic: {
         flex: 1,

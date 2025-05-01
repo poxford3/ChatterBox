@@ -14,8 +14,10 @@ SplashScreen.preventAutoHideAsync();
 
 
 type createSeshProps = {
-    name: string, 
-    users: [User]
+    name: string,
+    type: "weight" | "run" | "bike",
+    exercises?: Exercise[],
+    users: string[]
 }
 type finishSeshProps = {
     duration: number, // in milliseconds
@@ -28,7 +30,7 @@ type deleteSeshProps = {
 type SessionState = {
     session: Session | null,
     allSessions: Session[] | null
-    createSession: ({ name, users }: createSeshProps) => void;
+    createSession: ({ name, type, exercises, users }: createSeshProps) => void;
     finishSession: ({ duration }: finishSeshProps) => void;
     deleteSession: ({ sesh_id }: deleteSeshProps) => void
 }
@@ -85,15 +87,17 @@ export function SessionProvider({ children }: PropsWithChildren) {
         }
     }
 
-    const createSession = ({ name, users }: createSeshProps) => {
+    const createSession = ({ name, type, exercises, users }: createSeshProps) => {
         // console.log('activity', session?.active);
         if (!session || session.active === undefined || session.active === false) {
             const newSesh: Session = {
                 id: uuid.v4(),
                 name: name,
-                active: true,
-                date: new Date(),
                 duration: 0,
+                date: new Date(),
+                active: true,
+                type: type,
+                exercises: exercises,
                 users: users
             }
             storeSessionState({ newState: newSesh });
