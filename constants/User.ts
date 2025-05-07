@@ -4,5 +4,4 @@ interface User {
     password: string
     email: string,
     friends?: string[],
-    workouts?: Workout[]
 }

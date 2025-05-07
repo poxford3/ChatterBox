@@ -60,6 +60,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
         let allSessionsJson;
 
+        // TODO refactor to be an if then do the try catch instead of 2 try-catches
         if (newState) {
             try {
                 // check if the session already exists
