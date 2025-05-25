@@ -9,8 +9,9 @@ import { ThemeContext } from '@react-navigation/native';
 export default function ActivityProfileBox({ user }: {user: User}) {
 
     // const user = useContext(SessionContext);
-    const workoutCount = user.workouts?.length;
-    const friendCount = user.friends?.length;
+    // const workoutCount = user.workouts?.length;
+    const workoutCount = 2 | 1;
+    const friendCount = user.friendsCount;
     const theme = useContext(ThemeContext);
     
     return (

@@ -3,5 +3,6 @@ interface User {
     name: string
     password: string
     email: string,
-    friends?: string[],
+    profilePic: string,
+    // friendsCount: number,
 }

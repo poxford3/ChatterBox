@@ -6,5 +6,5 @@ interface Session {
     active: boolean,
     type: SessionType,
     exercises?: Exercise[],
-    users: string[]
+    users: number[]
 }

@@ -17,7 +17,7 @@ type createSeshProps = {
     name: string,
     type: "weight" | "run" | "bike",
     exercises?: Exercise[],
-    users: string[]
+    users: number[]
 }
 type finishSeshProps = {
     duration: number, // in milliseconds

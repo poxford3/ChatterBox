@@ -13,21 +13,8 @@ export default function User() {
       name: 'test',
       email: 'testemail',
       password: 'test',
-      friends: ['friend1', 'friend2', 'friend3', 'friend4'],
-      workouts: [
-        {
-          id: "workout1",
-          type: 'cardio'
-        },
-        {
-          id: "workout2",
-          type: 'cardio'
-        },
-        {
-          id: "workout2",
-          type: 'cardio'
-        },
-      ]}
+      friendsCount: 10,
+    }
 
   // useEffect(() => {
 
