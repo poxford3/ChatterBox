@@ -2,6 +2,9 @@ import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SplashScreen, useRouter } from "expo-router";
 import { ApiService } from "@/hooks/ApiService";
+import { BASE_URL } from "@env";
+
+console.log('base', BASE_URL);
 
 SplashScreen.preventAutoHideAsync();
 
@@ -23,7 +26,6 @@ type deleteUserProps = {
     id: string
 }
 
-// TODO implement login/out
 type UserState = {
     user: User | null,
     jwt: string,
@@ -50,7 +52,7 @@ export function UserProvider({ children }: PropsWithChildren) {
     const [jwt, setJwt] = useState<string>("");
     const router = useRouter();
 
-    const api = new ApiService("http://localhost:8080");
+    const api = new ApiService(BASE_URL);
 
     type storeUserProps = {
         id: string,
@@ -72,17 +74,20 @@ export function UserProvider({ children }: PropsWithChildren) {
                 if (activeUser) {
                     setUser(activeUser);
                     setIsReady(true);
-                    return activeUser;
+                    // return activeUser;
+                    router.replace("/(tabs)/sessions")
                 }
-            }
+            } else {
+                console.log('user not found, need to sign in');
+                router.replace('/signin');
+            } 
 
         } catch (err) {
             console.error(`error! ${err}`);
-            return false;
+            router.replace('/signin');
         }
     }
 
-    
     type SigninResponse = {
         id: string,
         token: string,
@@ -92,9 +97,12 @@ export function UserProvider({ children }: PropsWithChildren) {
         type: string
     }
     
-    const signIn = async (id: number) => {
+    const signin = async ({ username, password }: createUserProps) => {
         try {
-            const user_data = await api.get<SigninResponse>(`/users/${id}`);
+            const user_data = await api.post<SigninResponse>(`/api/auth/signin`, {
+                username,
+                password
+            });
 
             storeUserLocal({ id: user_data.id, jwt: user_data.token });
             setJwt(user_data.token);
@@ -102,6 +110,11 @@ export function UserProvider({ children }: PropsWithChildren) {
         } catch (err) {
             console.error(`sign in error: ${err}`);
         }
+    }
+
+    const signout = async () => {
+        await AsyncStorage.multiRemove(["id", "jwt"]);
+        router.replace("/signin");
     }
 
     type SignupResponse = {
@@ -117,7 +130,7 @@ export function UserProvider({ children }: PropsWithChildren) {
             });
 
             if (data.id !== null) {
-                signIn(data.id);
+                signin({ username, password });
                 console.log('User registered', data);
                 router.replace("/");
             }

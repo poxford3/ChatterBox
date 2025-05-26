@@ -14,22 +14,17 @@ export default function SessionMaker() {
 
     const [sessionName, setSessionName] = useState<string>("");
     const [sessionType, setSessionType] = useState<SessionType>(null);
-    const [sessionUsers, setSessionUsers] = useState<User[]>([{
-            id: "testid",
-            name: "fake user",
-            password: "fake pass",
-            email: "fake email"
-        }]);
+    const [sessionUsers, setSessionUsers] = useState<number[]>([1,2,3]);
 
     const submitForm = () => {
         console.log('submit form');
-        const userIdList = sessionUsers.map(u => u.id);
+        // const userIdList = sessionUsers.map(u => u.id);
         if (!sessionName) return;
         if (!sessionType) return;
         seshState.createSession({ 
             name: sessionName,
             type: sessionType,
-            users: userIdList 
+            users: sessionUsers 
         })
     }
 
