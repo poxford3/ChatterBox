@@ -1,7 +1,9 @@
-import { act, createContext, PropsWithChildren, useEffect, useState } from "react";
+import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SplashScreen, useRouter } from "expo-router";
 import { ApiService } from "@/hooks/ApiService";
-import { useRouter } from "expo-router";
+
+SplashScreen.preventAutoHideAsync();
 
 type createUserProps = {
     username: string,
@@ -21,8 +23,12 @@ type deleteUserProps = {
     id: string
 }
 
+// TODO implement login/out
 type UserState = {
     user: User | null,
+    jwt: string,
+    signin: ({ username, password }: createUserProps) => void,
+    signout: () => void,
     createUser: ({ username, password }: createUserProps) => void
     updateUser: ({ username, name, password, profilePic, email }: updateUserProps) => void
     deleteUser: ({ id }: deleteUserProps) => void
@@ -30,6 +36,9 @@ type UserState = {
 
 export const UserContext = createContext<UserState>({
     user: null,
+    jwt: "",
+    signin: () => {},
+    signout: () => {},
     createUser: () => {},
     updateUser: () => {},
     deleteUser: () => {},
@@ -37,6 +46,8 @@ export const UserContext = createContext<UserState>({
 
 export function UserProvider({ children }: PropsWithChildren) {
     const [user, setUser] = useState<User | null>(null);
+    const [isReady, setIsReady] = useState(false);
+    const [jwt, setJwt] = useState<string>("");
     const router = useRouter();
 
     const api = new ApiService("http://localhost:8080");
@@ -46,7 +57,7 @@ export function UserProvider({ children }: PropsWithChildren) {
         jwt: string
     }
 
-    const storeUser = async ({id, jwt}: storeUserProps) => {
+    const storeUserLocal = async ({id, jwt}: storeUserProps) => {
         await AsyncStorage.setItem('jwt', jwt);
         await AsyncStorage.setItem('user_id', id);
     }
@@ -54,25 +65,48 @@ export function UserProvider({ children }: PropsWithChildren) {
     const getUser = async () => {
         try {
             const user_id = await AsyncStorage.getItem("user_id");
-    
-            const activeUser = await api.get<User>(`/users/${user_id}`);
-
-            if (activeUser) {
-                setUser(activeUser);
-                return activeUser
+            const storedJwt = await AsyncStorage.getItem("jwt");
+            if (user_id !== null && storedJwt !== null) {
+                const activeUser = await api.get<User>(`/users/${user_id}`, storedJwt);
+                
+                if (activeUser) {
+                    setUser(activeUser);
+                    setIsReady(true);
+                    return activeUser;
+                }
             }
+
         } catch (err) {
-            console.error(`error! ${err}`)
+            console.error(`error! ${err}`);
+            return false;
         }
     }
 
-    type SignupResponse = {
+    
+    type SigninResponse = {
         id: string,
         token: string,
         tokenType: string,
         roles: any,
         username: string,
         type: string
+    }
+    
+    const signIn = async (id: number) => {
+        try {
+            const user_data = await api.get<SigninResponse>(`/users/${id}`);
+
+            storeUserLocal({ id: user_data.id, jwt: user_data.token });
+            setJwt(user_data.token);
+            getUser();
+        } catch (err) {
+            console.error(`sign in error: ${err}`);
+        }
+    }
+
+    type SignupResponse = {
+        message: string,
+        id: number
     }
 
     const createUser = async ({ username, password }: createUserProps) => {
@@ -82,9 +116,12 @@ export function UserProvider({ children }: PropsWithChildren) {
                 password: password
             });
 
-            storeUser({ id: data.id, jwt: data.token });
-            router.replace("/");
-            console.log('User registered', data);
+            if (data.id !== null) {
+                signIn(data.id);
+                console.log('User registered', data);
+                router.replace("/");
+            }
+
         } catch (err) {
             console.error('Registration failed', err)
         }
@@ -108,7 +145,7 @@ export function UserProvider({ children }: PropsWithChildren) {
 
     const deleteUser = async ({ id }: deleteUserProps) => {
         try {
-            const data = await api.delete(`/users/${id}`);
+            const data = await api.delete(`/users/${id}`, jwt);
 
             console.log('User updated', data);
         } catch (err) {
@@ -120,10 +157,19 @@ export function UserProvider({ children }: PropsWithChildren) {
         getUser();
     }, [])
 
+    useEffect(() => {
+    if (isReady) {
+        SplashScreen.hideAsync();
+    }
+    }, [isReady]);
+
     return (
         <UserContext.Provider
             value={{
                 user,
+                jwt,
+                signin,
+                signout,
                 createUser,
                 updateUser,
                 deleteUser

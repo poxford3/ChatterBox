@@ -1,7 +1,6 @@
 /**
  * Creates a connector to an API
  * with REST methods to call the API
- * 
  */
 export class ApiService {
     // private baseUrl = "http://localhost:8080";
@@ -13,6 +12,7 @@ export class ApiService {
 
     /**
      * basic REST get method
+     * @method get
      * 
      * @param endpoint 
      * @param authToken 
@@ -38,7 +38,7 @@ export class ApiService {
         return this.handleResponse<T>(response);
     }
 
-    async put<T>(endpoint: string, data: any, authToken?: string): Promise<T> {
+    async put<T>(endpoint: string, data: any, authToken: string): Promise<T> {
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
             method: 'PUT',
             headers: this.getHeaders(authToken),
@@ -48,7 +48,7 @@ export class ApiService {
         return this.handleResponse<T>(response);
     }
 
-    async delete<T>(endpoint: string, data?: any, authToken?: string): Promise<T> {
+    async delete<T>(endpoint: string, authToken?: string, data?: any): Promise<T> {
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
             method: 'DELETE',
             headers: this.getHeaders(authToken),

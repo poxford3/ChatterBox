@@ -13,7 +13,8 @@ export default function User() {
       name: 'test',
       email: 'testemail',
       password: 'test',
-      friendsCount: 10,
+      profilePic: ''
+      // friendsCount: 10,
     }
 
   // useEffect(() => {

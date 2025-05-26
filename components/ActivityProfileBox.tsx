@@ -11,7 +11,8 @@ export default function ActivityProfileBox({ user }: {user: User}) {
     // const user = useContext(SessionContext);
     // const workoutCount = user.workouts?.length;
     const workoutCount = 2 | 1;
-    const friendCount = user.friendsCount;
+    // const friendCount = user.friendsCount;
+    const friendCount = 1
     const theme = useContext(ThemeContext);
     
     return (

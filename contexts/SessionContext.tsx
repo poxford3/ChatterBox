@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SplashScreen, useRouter } from "expo-router";
-import { createContext, PropsWithChildren, useEffect, useState } from "react";
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
 import uuid from 'react-native-uuid';
+import { UserContext } from "./UserContext";
 
 
 const clearAsyncStorage = async() => {
@@ -10,7 +11,7 @@ const clearAsyncStorage = async() => {
 
 // clearAsyncStorage();
 
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 
 
 type createSeshProps = {
@@ -46,10 +47,12 @@ export const SessionContext = createContext<SessionState>({
 });
 
 export function SessionProvider({ children }: PropsWithChildren) {
-    const [isReady, setIsReady] = useState(false);
+    // const [isReady, setIsReady] = useState(false);
     const [session, setSession] = useState<Session | null>(null);
     const [allSessions, setAllSessions] = useState<Session[] | null>(null);
     const router = useRouter();
+
+    const currentUser = useContext(UserContext);
 
     type storeSeshProps = {
         newState?: Session,
@@ -58,34 +61,27 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
     const storeSessionState = async ({newState, sessions}: storeSeshProps) => {
 
-        let allSessionsJson;
-
-        // TODO refactor to be an if then do the try catch instead of 2 try-catches
-        if (newState) {
-            try {
-                // check if the session already exists
-                const tempAllSessions: Session[] = allSessions ?? [];
-                const updatedSessions = tempAllSessions.some(s => s.id === newState.id)
+        try {
+            let allSessionsJson: string;
+          
+            if (newState) {
+              const tempAllSessions: Session[] = allSessions ?? [];
+              const updatedSessions = tempAllSessions.some(s => s.id === newState.id)
                 ? tempAllSessions.map(s => (s.id === newState.id ? newState : s))
                 : [...tempAllSessions, newState];
           
-                setAllSessions(updatedSessions);
-                allSessionsJson = JSON.stringify(updatedSessions);
-                // console.log('store', allSessionsJson);
-                await AsyncStorage.setItem(sessionStorageKey, allSessionsJson);
-            } catch (error) {
-                console.log("error storing session state", error);
+              setAllSessions(updatedSessions);
+              allSessionsJson = JSON.stringify(updatedSessions);
+            } else if (sessions) {
+              allSessionsJson = JSON.stringify(sessions);
+            } else {
+              return; // Nothing to store
             }
-        } else if (sessions) {
-            try {
-                // check if the session already exists
-                allSessionsJson = JSON.stringify(sessions);
-                // console.log('store', allSessionsJson);
-                await AsyncStorage.setItem(sessionStorageKey, allSessionsJson);
-            } catch (error) {
-                console.log("error storing session state", error);
-            }
-        }
+          
+            await AsyncStorage.setItem(sessionStorageKey, allSessionsJson);
+          } catch (error) {
+            console.log("error storing session state", error);
+          }
     }
 
     const createSession = ({ name, type, exercises, users }: createSeshProps) => {
@@ -145,16 +141,16 @@ export function SessionProvider({ children }: PropsWithChildren) {
           } catch (error) {
             console.log("Error fetching from storage", error);
           } 
-            setIsReady(true);
+            // setIsReady(true);
         };
         getSeshFromStorage();
       }, []);
     
-      useEffect(() => {
-        if (isReady) {
-          SplashScreen.hideAsync();
-        }
-      }, [isReady]);
+    //   useEffect(() => {
+    //     if (isReady) {
+    //       SplashScreen.hideAsync();
+    //     }
+    //   }, [isReady]);
 
     return (
         <SessionContext.Provider
