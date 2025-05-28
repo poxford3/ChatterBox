@@ -2,9 +2,6 @@ import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SplashScreen, useRouter } from "expo-router";
 import { ApiService } from "@/hooks/ApiService";
-import { BASE_URL } from "@env";
-
-console.log('base', BASE_URL);
 
 SplashScreen.preventAutoHideAsync();
 
@@ -52,7 +49,7 @@ export function UserProvider({ children }: PropsWithChildren) {
     const [jwt, setJwt] = useState<string>("");
     const router = useRouter();
 
-    const api = new ApiService(BASE_URL);
+    const api = new ApiService("http://localhost:8080");
 
     type storeUserProps = {
         id: string,
@@ -61,7 +58,7 @@ export function UserProvider({ children }: PropsWithChildren) {
 
     const storeUserLocal = async ({id, jwt}: storeUserProps) => {
         await AsyncStorage.setItem('jwt', jwt);
-        await AsyncStorage.setItem('user_id', id);
+        await AsyncStorage.setItem('user_id', id.toString());
     }
 
     const getUser = async () => {
@@ -70,12 +67,14 @@ export function UserProvider({ children }: PropsWithChildren) {
             const storedJwt = await AsyncStorage.getItem("jwt");
             if (user_id !== null && storedJwt !== null) {
                 const activeUser = await api.get<User>(`/users/${user_id}`, storedJwt);
+                console.log('user found', activeUser);
                 
                 if (activeUser) {
                     setUser(activeUser);
+                    setJwt(storedJwt);
                     setIsReady(true);
                     // return activeUser;
-                    router.replace("/(tabs)/sessions")
+                    router.replace("/(tabs)")
                 }
             } else {
                 console.log('user not found, need to sign in');
@@ -83,9 +82,10 @@ export function UserProvider({ children }: PropsWithChildren) {
             } 
 
         } catch (err) {
-            console.error(`error! ${err}`);
+            console.error(`error finding user! ${err}`);
             router.replace('/signin');
         }
+        setIsReady(true);
     }
 
     type SigninResponse = {

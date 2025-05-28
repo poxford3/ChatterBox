@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Image, StyleSheet, PermissionsAndroid, Platform, Alert, Pressable, TouchableOpacity } from 'react-native'
 import { ThemedView } from './ThemedView'
 import { ThemedText } from './ThemedText';
@@ -6,11 +6,30 @@ import { convertImageToBase64 } from '@/hooks/imgToBase64';
 import * as ImagePicker from 'expo-image-picker';
 import { IconSymbol } from './ui/IconSymbol';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { UserContext } from '@/contexts/UserContext';
+import { ApiService } from '@/hooks/ApiService';
 
-export default function ProfilePic() {
+export default function ProfilePic({ api }: { api: ApiService }) {
 
-  const [image, setImage] = useState("");
+  const userContext = useContext(UserContext);
+  const user = userContext.user;
+  const jwt = userContext.jwt;
+  // const api = new ApiService("")
+
+  const [image, setImage] = useState(user?.profilePic);
   const iconColor = useThemeColor({}, "text");
+
+  const updateUser = async (newPic: string) => {
+    try {
+      let updatedUser = await api.put<User>("/users",{
+        id: user?.id,
+        name: user?.name,
+        profilePic: newPic,
+      } ,jwt);
+    } catch (err) {
+      console.error("error updating user", err);
+    }
+  }
 
   // const test_b64 = convertImageToBase64("https://avatars.githubusercontent.com/u/93592037?v=4");
 
@@ -106,7 +125,7 @@ export default function ProfilePic() {
             <IconSymbol name='gear' color={iconColor} size={30} />
           </TouchableOpacity>
         </ThemedView>
-        <ThemedText type='title'>First Last</ThemedText>
+        <ThemedText type='title'>{user?.name}</ThemedText>
       </ThemedView>
   )
 }
