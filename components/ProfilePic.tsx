@@ -19,18 +19,6 @@ export default function ProfilePic({ api }: { api: ApiService }) {
   const [image, setImage] = useState(user?.profilePic);
   const iconColor = useThemeColor({}, "text");
 
-  const updateUser = async (newPic: string) => {
-    try {
-      let updatedUser = await api.put<User>("/users",{
-        id: user?.id,
-        name: user?.name,
-        profilePic: newPic,
-      } ,jwt);
-    } catch (err) {
-      console.error("error updating user", err);
-    }
-  }
-
   // const test_b64 = convertImageToBase64("https://avatars.githubusercontent.com/u/93592037?v=4");
 
   const threeButtonAlert = () => {
@@ -88,6 +76,13 @@ export default function ProfilePic({ api }: { api: ApiService }) {
       const img_b64 = assets[0].base64;
       const img_uri = assets[0].uri;
       const image_output = img_b64 ? `data:image/png;base64, ${img_b64}` : img_uri;
+      userContext.updateUser({
+        id: user?.id ?? 0,
+        username: user?.username,
+        name: user?.name,
+        email: user?.email,
+        profilePic: image_output
+      });
       setImage(image_output);
     }
   }

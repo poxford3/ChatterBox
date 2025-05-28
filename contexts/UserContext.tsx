@@ -12,7 +12,7 @@ type createUserProps = {
 
 export type updateUserProps = {
     id: number,
-    username: string,
+    username?: string,
     name?: string,
     password?: string,
     email?: string,
@@ -140,15 +140,14 @@ export function UserProvider({ children }: PropsWithChildren) {
         }
     }
 
-    const updateUser = async ({ id, username, name, password, profilePic, email }: updateUserProps) => {
+    const updateUser = async ({ id, username, name, profilePic, email }: updateUserProps) => {
         try {
-            const data = await api.post(`/users/${id}`, {
+            const data = await api.put(`/users/${id}`, {
                 username: username,
-                password: password,
                 name: name,
                 profilePic: profilePic,
                 email: email
-            });
+            }, jwt);
 
             console.log('User updated', data);
         } catch (err) {
@@ -162,7 +161,7 @@ export function UserProvider({ children }: PropsWithChildren) {
 
             console.log('User updated', data);
         } catch (err) {
-            console.error('Update user failed', err)
+            console.error('Delete user failed', err)
         }
     }
 
