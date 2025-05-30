@@ -13,7 +13,6 @@ export default function User() {
 
   const userContext = useContext(UserContext);
   const api = new ApiService("http://localhost:8080");
-
   
 
   return (

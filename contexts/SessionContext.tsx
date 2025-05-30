@@ -3,6 +3,8 @@ import { SplashScreen, useRouter } from "expo-router";
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
 import uuid from 'react-native-uuid';
 import { UserContext } from "./UserContext";
+import { ApiService } from "@/hooks/ApiService";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 
 const clearAsyncStorage = async() => {
@@ -18,7 +20,7 @@ type createSeshProps = {
     name: string,
     type: "weight" | "run" | "bike",
     exercises?: Exercise[],
-    users: number[]
+    userIds: number[]
 }
 type finishSeshProps = {
     duration: number, // in milliseconds
@@ -31,9 +33,10 @@ type deleteSeshProps = {
 type SessionState = {
     session: Session | null,
     allSessions: Session[] | null
-    createSession: ({ name, type, exercises, users }: createSeshProps) => void;
+    createSession: ({ name, type, exercises, userIds }: createSeshProps) => void;
     finishSession: ({ duration }: finishSeshProps) => void;
-    deleteSession: ({ sesh_id }: deleteSeshProps) => void
+    deleteSession: ({ sesh_id }: deleteSeshProps) => void;
+    getAllSessions: () => void;
 }
 
 const sessionStorageKey = "sesh-key";
@@ -44,114 +47,100 @@ export const SessionContext = createContext<SessionState>({
     createSession: () => {},
     finishSession: () => {},
     deleteSession: () => {},
+    getAllSessions: () => {},
 });
 
 export function SessionProvider({ children }: PropsWithChildren) {
     // const [isReady, setIsReady] = useState(false);
+    const userContext = useContext(UserContext);
+    const user = userContext.user;
+    const jwt = userContext.jwt;
+    const api = new ApiService("http://localhost:8080");
     const [session, setSession] = useState<Session | null>(null);
     const [allSessions, setAllSessions] = useState<Session[] | null>(null);
     const router = useRouter();
 
-    const currentUser = useContext(UserContext);
-
-    type storeSeshProps = {
-        newState?: Session,
-        sessions?: Session[]
+    const hasActiveSession = (sessions: Session[] | null): boolean => {
+        if (sessions) {
+            return sessions.some(sesh => sesh.active);
+        } else {
+            return false
+        }
     }
 
-    const storeSessionState = async ({newState, sessions}: storeSeshProps) => {
-
-        try {
-            let allSessionsJson: string;
-          
-            if (newState) {
-              const tempAllSessions: Session[] = allSessions ?? [];
-              const updatedSessions = tempAllSessions.some(s => s.id === newState.id)
-                ? tempAllSessions.map(s => (s.id === newState.id ? newState : s))
-                : [...tempAllSessions, newState];
-          
-              setAllSessions(updatedSessions);
-              allSessionsJson = JSON.stringify(updatedSessions);
-            } else if (sessions) {
-              allSessionsJson = JSON.stringify(sessions);
-            } else {
-              return; // Nothing to store
-            }
-          
-            await AsyncStorage.setItem(sessionStorageKey, allSessionsJson);
-          } catch (error) {
-            console.log("error storing session state", error);
-          }
-    }
-
-    const createSession = ({ name, type, exercises, users }: createSeshProps) => {
-        // console.log('activity', session?.active);
-        if (!session || session.active === undefined || session.active === false) {
+    const createSession = async ({ name, type, exercises, userIds }: createSeshProps) => {
+        // if a sessions list is found and if no session is active
+        console.log('create session', name, userIds);
+        if (!hasActiveSession(allSessions)) { 
+            console.log("made it in");
             const newSesh: Session = {
                 id: uuid.v4(),
                 name: name,
                 duration: 0,
-                date: new Date(),
                 active: true,
                 type: type,
                 exercises: exercises,
-                users: users
+                userIds: userIds
             }
-            storeSessionState({ newState: newSesh });
-            setSession(newSesh);
-            router.replace("/");
-        } else if (session.active === true) {
+            await api.post<Session>("/sessions", newSesh, jwt).then((res) => {
+                setSession(res);
+                router.replace("/");
+            })
+            .catch((err) => {
+                console.error('error creating session: ', err);
+            });
+        } else if (session?.active === true) {
             console.log("session already active");
         }
     }
 
 
-    const finishSession = ({ duration }: finishSeshProps) => {
+    const finishSession = async ({ duration }: finishSeshProps) => {
         if (!session) return;
 
-        session.duration = duration;
-        session.active = false;
-        storeSessionState({ newState: session });
-        setSession(null);
+        const finishedSession = {
+            ...session,
+            duration: duration,
+            active: false
+        };
+        await api.put<Session>(`/sessions/${session.id}`, finishedSession, jwt).then(() => {
+            setSession(null);
+        });
     }
 
-    const deleteSession = ({ sesh_id }: deleteSeshProps) => {
+    const deleteSession = async ({ sesh_id }: deleteSeshProps) => {
         if (!allSessions) return;
 
-        const sessions = allSessions;
-        const new_sessions = sessions?.filter((sesh) => sesh.id !== sesh_id);
+        let deletedMessage = await api.delete<string>(`/sessions/${sesh_id}`, jwt).then(() => {});
+        getAllSessions();
+        console.log(deletedMessage);
+    }
 
-        setAllSessions(new_sessions);
-        storeSessionState({ sessions: new_sessions });
+    const getAllSessions = async () => {
+        await api.get<Session[]>(`/sessions?user_id=${user?.id}`, jwt).then((seshList) => {
+            if (seshList) {
+                setAllSessions(seshList);
+                // console.log('all seshs', seshList);
+                if (hasActiveSession(seshList) && seshList) {
+                    const activeSession = seshList.filter(sesh => sesh.active)[0];
+                    setSession(activeSession);
+                }
+            }
+        });
     }
 
     useEffect(() => {
-        const getSeshFromStorage = async () => {
-          try {
-            const value = await AsyncStorage.getItem(sessionStorageKey);
-            // console.log('value', value);
-            if (value !== null) {
-                const sessions = JSON.parse(value);
-                // console.log('all sessions', sessions);
-                const active_sesh = sessions.filter((a: Session) => a.active === true)[0];
-                // console.log(active_sesh);
-                setAllSessions(sessions);
-                setSession(active_sesh);
-            }
-          } catch (error) {
-            console.log("Error fetching from storage", error);
-          } 
-            // setIsReady(true);
-        };
-        getSeshFromStorage();
-      }, []);
-    
-    //   useEffect(() => {
-    //     if (isReady) {
-    //       SplashScreen.hideAsync();
-    //     }
-    //   }, [isReady]);
+        getAllSessions();
+    }, [user]);
 
+    useEffect(() => {
+        getAllSessions();
+    }, [session]);
+
+    useEffect(() => {
+        getAllSessions();
+    }, []);
+    
     return (
         <SessionContext.Provider
             value={{ 
@@ -160,6 +149,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
                 createSession,
                 finishSession,
                 deleteSession,
+                getAllSessions,
             }}
         >
             {children}

@@ -114,6 +114,8 @@ export function UserProvider({ children }: PropsWithChildren) {
 
     const signout = async () => {
         await AsyncStorage.multiRemove(["id", "jwt"]);
+        setUser(null);
+        setJwt("");
         router.replace("/signin");
     }
 
@@ -164,6 +166,10 @@ export function UserProvider({ children }: PropsWithChildren) {
             console.error('Delete user failed', err)
         }
     }
+
+    // useEffect(() => {
+    //     getUser();
+    // }, [user])
 
     useEffect(() => {
         getUser();

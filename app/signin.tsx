@@ -1,8 +1,8 @@
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
 import React, { useContext, useState } from 'react'
 import { ThemedView } from '@/components/ThemedView'
 import { ThemedText } from '@/components/ThemedText'
-import { Button, TextInput } from 'react-native-paper'
+import { Button } from 'react-native-paper'
 import { TextField } from '@/components/TextField'
 import { UserContext } from '@/contexts/UserContext'
 

@@ -5,5 +5,5 @@ interface User {
     password: string
     email: string,
     profilePic: string,
-    // friendsCount: number,
+    roles: Role[]
 }
