@@ -1,37 +1,19 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { StyleSheet } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ThemedView } from '@/components/ThemedView';
 import ProfilePic from '@/components/ProfilePic';
 import ActivityProfileBox from '@/components/ActivityProfileBox';
+import { Button } from 'react-native-paper';
+import { UserContext } from '@/contexts/UserContext';
+import { ApiService } from '@/hooks/ApiService';
 
 export default function User() {
 
-  let testUser: User = {
-      id: 'testid',
-      name: 'test',
-      email: 'testemail',
-      password: 'test',
-      friends: ['friend1', 'friend2', 'friend3', 'friend4'],
-      workouts: [
-        {
-          id: "workout1",
-          type: 'cardio'
-        },
-        {
-          id: "workout2",
-          type: 'cardio'
-        },
-        {
-          id: "workout2",
-          type: 'cardio'
-        },
-      ]}
-
-  // useEffect(() => {
-
-  // }, [user])
+  const userContext = useContext(UserContext);
+  const api = new ApiService("http://localhost:8080");
+  
 
   return (
     <ParallaxScrollView
@@ -45,8 +27,11 @@ export default function User() {
         />
       }>
         <ThemedView>
-            <ProfilePic />
-            <ActivityProfileBox user={testUser} />
+            <ProfilePic api={api} />
+            <ActivityProfileBox api={api} />
+            <Button
+              onPress={userContext.signout}
+            >sign out</Button>
         </ThemedView>
       </ParallaxScrollView>
   )

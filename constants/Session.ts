@@ -2,9 +2,9 @@ interface Session {
     id: string,
     name: string,
     duration: number // in milliseconds
-    date: Date,
+    created?: Date,
     active: boolean,
     type: SessionType,
     exercises?: Exercise[],
-    users: string[]
+    userIds: number[]
 }

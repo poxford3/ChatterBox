@@ -11,6 +11,11 @@ import SpeakerPic from './SpeakerPic';
 export default function SessionView() {
 
   const seshState = useContext(SessionContext);
+  const session = seshState.session;
+  // const created = session?.created!.getTime()!;
+  // const now = new Date().getTime();
+  // const timeSinceCreation = now - created;
+  // console.log()
 
   const [duration, setDuration] = useState(0);
 
@@ -18,7 +23,6 @@ export default function SessionView() {
     setDuration(dur);
   }
 
-  const session = seshState.session;
   if (!session) return;
   // const username = session?.users[0].name
   const username = "change me"

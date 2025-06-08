@@ -32,15 +32,17 @@ export default function Sessions() {
         ])
     }
 
+
     const SessionListItem = ({ sesh }: seshListProps) => (
 
         <ThemedView style={{ borderColor: borderColor, borderWidth: 1, borderRadius: 10, padding: 10, marginVertical: 5}}>
             <Pressable onPress={() => twoButtonAlert({ id: sesh.id })}>
                 <ThemedText>name: {sesh.name}</ThemedText>
                 {/* <ThemedText>id: {sesh.id}</ThemedText> */}
-                <ThemedText>duration: {formatDuration({minutes: millisecondsToMinutes(sesh.duration)})}</ThemedText>
+                {/* <ThemedText>duration: {formatDuration({minutes: millisecondsToMinutes(sesh.duration)})}</ThemedText> */}
+                <ThemedText>duration: {sesh.duration}</ThemedText>
                 <ThemedText>active?: {sesh.active.toString()}</ThemedText>
-                <ThemedText>time since: {formatDistance(sesh.date, new Date())}</ThemedText>
+                <ThemedText>time since: {formatDistance(sesh.created!, new Date())}</ThemedText>
                 {/* <ThemedText>user: {sesh.users[0].name}</ThemedText> */}
             </Pressable>
         </ThemedView>

@@ -1,7 +1,9 @@
 interface User {
-    id: string,
+    id: number,
+    username: string,
     name: string
     password: string
     email: string,
-    friends?: string[],
+    profilePicBase64: string,
+    roles: Role[]
 }
