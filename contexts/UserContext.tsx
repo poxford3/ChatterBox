@@ -16,7 +16,7 @@ export type updateUserProps = {
     name?: string,
     password?: string,
     email?: string,
-    profilePic?: string
+    profilePic?: ImageUpload
 }
 
 type deleteUserProps = {
@@ -67,7 +67,7 @@ export function UserProvider({ children }: PropsWithChildren) {
             const storedJwt = await AsyncStorage.getItem("jwt");
             if (user_id !== null && storedJwt !== null) {
                 const activeUser = await api.get<User>(`/users/${user_id}`, storedJwt);
-                console.log('user found', activeUser);
+                console.log('user found', activeUser.id, activeUser.username);
                 
                 if (activeUser) {
                     setUser(activeUser);
@@ -79,10 +79,10 @@ export function UserProvider({ children }: PropsWithChildren) {
             } else {
                 console.log('user not found, need to sign in');
                 router.replace('/signin');
-            } 
+            }
 
         } catch (err) {
-            console.error(`error finding user! ${err}`);
+            console.log(`error finding user! ${err}`);
             router.replace('/signin');
         }
         setIsReady(true);
@@ -102,13 +102,13 @@ export function UserProvider({ children }: PropsWithChildren) {
             const user_data = await api.post<SigninResponse>(`/api/auth/signin`, {
                 username,
                 password
-            });
+            },undefined, "application/json");
 
             storeUserLocal({ id: user_data.id, jwt: user_data.token });
             setJwt(user_data.token);
             getUser();
         } catch (err) {
-            console.error(`sign in error: ${err}`);
+            console.log(`sign in error: ${err}`);
         }
     }
 
@@ -138,24 +138,108 @@ export function UserProvider({ children }: PropsWithChildren) {
             }
 
         } catch (err) {
-            console.error('Registration failed', err)
+            console.log('Registration failed', err)
         }
     }
+
+    // const updateUser = async ({ id, username, name, profilePic, email }: updateUserProps) => {
+    //     try {
+    //         const userData = {
+    //             username: username,
+    //             name: name,
+    //             email: email,
+    //             password: user?.password,
+    //             roles: ['user']
+    //         }
+    //         // const formData = new FormData();
+    //         // formData.append('editedUserRequest', new Blob(
+    //         //     [JSON.stringify(userData)],
+    //         //     { type: 'application/json' }
+    //         // ));
+    //         // formData.append("editedUserRequest", JSON.stringify(userData));
+
+    //         if (profilePic) {
+    //             const formData = new FormData();
+    //             formData.append('profilePic', {
+    //                 uri: profilePic.uri,
+    //                 name: profilePic.name,
+    //                 type: profilePic.type,
+    //             } as any);
+                // const boundary = '----WebKitFormBoundary' + Math.random().toString(36).substring(2);
+                // const contentType = `multipart/form-data;boundary=${boundary}`
+
+    //             const newPfp = await api.put(
+    //                 `/users/${id}/profile_pic`,
+    //                 formData,
+    //                 jwt,
+    //                 contentType);
+
+    //             console.log(newPfp);
+    //             // formData.append('profilePic', {
+    //             //     uri: profilePic.uri,
+    //             //     name: profilePic.name,
+    //             //     type: profilePic.type,
+    //             // } as any);
+    //         }
+
+    //         // console.log('form', formData);
+
+    //         const data = await api.put(`/users/${id}`,
+    //             userData,
+    //             jwt);
+    //             // "multipart/form-data");
+    //             // undefined);
+
+    //         console.log('user updated', data)
+    //     } catch (err) {
+    //         console.log('Update user failed', err)
+    //     }
+    // }
 
     const updateUser = async ({ id, username, name, profilePic, email }: updateUserProps) => {
         try {
-            const data = await api.put(`/users/${id}`, {
-                username: username,
-                name: name,
-                profilePic: profilePic,
-                email: email
-            }, jwt);
+            const userData = {
+                username,
+                name,
+                email,
+                password: user?.password,
+                roles: user?.roles,
+            };
 
-            console.log('User updated', data);
+            if (profilePic) {
+                await uploadProfilePicture(id, profilePic);
+            }
+
+            const updatedUser = await api.put<User>(`/users/${id}`, userData, jwt);
+            getUser();
+            // console.log('User updated:', updatedUser);
+            // setUser(updatedUser);
+
         } catch (err) {
-            console.error('Update user failed', err)
+            console.error('Update user failed:', err);
         }
-    }
+    };
+
+        const uploadProfilePicture = async (userId: number, profilePic: ImageUpload) => {
+            const formData = new FormData();
+
+            formData.append('profilePic', {
+                uri: profilePic.uri,
+                name: profilePic.name,
+                type: profilePic.type,
+            } as any);
+
+            try {
+                const boundary = '----WebKitFormBoundary' + Math.random().toString(36).substring(2);
+                const contentType = `multipart/form-data;boundary=${boundary}`
+                const response = await api.put(`/users/${userId}/profile_pic`, formData, jwt, contentType);
+                // console.log('Profile picture updated:', response);
+            } catch (err) {
+                console.error('Profile picture update failed:', err);
+                throw err;
+            }
+        };
+
 
     const deleteUser = async ({ id }: deleteUserProps) => {
         try {
@@ -163,13 +247,9 @@ export function UserProvider({ children }: PropsWithChildren) {
 
             console.log('User updated', data);
         } catch (err) {
-            console.error('Delete user failed', err)
+            console.log('Delete user failed', err)
         }
     }
-
-    // useEffect(() => {
-    //     getUser();
-    // }, [user])
 
     useEffect(() => {
         getUser();

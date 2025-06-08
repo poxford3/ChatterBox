@@ -4,6 +4,6 @@ interface User {
     name: string
     password: string
     email: string,
-    profilePic: string,
+    profilePicBase64: string,
     roles: Role[]
 }

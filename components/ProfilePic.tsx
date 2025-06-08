@@ -16,7 +16,7 @@ export default function ProfilePic({ api }: { api: ApiService }) {
   const jwt = userContext.jwt;
   // const api = new ApiService("")
 
-  const [image, setImage] = useState(user?.profilePic);
+  const [image, setImage] = useState(`data:image/png;base64, ${user?.profilePicBase64}`);
   const iconColor = useThemeColor({}, "text");
 
   // const test_b64 = convertImageToBase64("https://avatars.githubusercontent.com/u/93592037?v=4");
@@ -75,14 +75,22 @@ export default function ProfilePic({ api }: { api: ApiService }) {
       const assets = result.assets;
       const img_b64 = assets[0].base64;
       const img_uri = assets[0].uri;
+      const img_name = assets[0].fileName
+      const img_type = assets[0].type;
       const image_output = img_b64 ? `data:image/png;base64, ${img_b64}` : img_uri;
-      userContext.updateUser({
+      const updatedUser = {
         id: user?.id ?? 0,
         username: user?.username,
         name: user?.name,
         email: user?.email,
-        profilePic: image_output
-      });
+        profilePic: {
+          uri: img_uri,
+          type: `image/${img_type}`,
+          name: img_name ?? "photo"
+        }
+      }
+      console.log('updated user req', updatedUser);
+      userContext.updateUser(updatedUser);
       setImage(image_output);
     }
   }

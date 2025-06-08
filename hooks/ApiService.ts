@@ -19,51 +19,54 @@ export class ApiService {
      * @param params 
      * @returns response of type T
      */
-    async get<T>(endpoint: string, authToken?: string, params?: any): Promise<T> {
+    async get<T>(endpoint: string, authToken?: string, params?: any, contentType?: string): Promise<T> {
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
             method: 'GET',
-            headers: this.getHeaders(authToken),
+            headers: this.getHeaders(authToken, contentType),
         });
 
         return this.handleResponse<T>(response);
     }
 
-    async post<T>(endpoint: string, data: any, authToken?: string): Promise<T> {
+    async post<T>(endpoint: string, data: any, authToken?: string, contentType?: string): Promise<T> {
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
             method: 'POST',
-            headers: this.getHeaders(authToken),
+            headers: this.getHeaders(authToken, contentType),
             body: JSON.stringify(data),
         });
 
         return this.handleResponse<T>(response);
     }
 
-    async put<T>(endpoint: string, data: any, authToken: string): Promise<T> {
+    async put<T>(endpoint: string, data: any, authToken: string, contentType?: string): Promise<T> {
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
             method: 'PUT',
-            headers: this.getHeaders(authToken),
-            body: JSON.stringify(data),
+            headers: this.getHeaders(authToken, contentType),
+            body: data instanceof FormData ? data : JSON.stringify(data),
         });
 
         return this.handleResponse<T>(response);
     }
 
-    async delete<T>(endpoint: string, authToken?: string, data?: any): Promise<T> {
+    async delete<T>(endpoint: string, authToken?: string, data?: any, contentType?: string): Promise<T> {
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
             method: 'DELETE',
-            headers: this.getHeaders(authToken),
+            headers: this.getHeaders(authToken, contentType),
             body: data ? JSON.stringify(data) : undefined,
         });
 
         return this.handleResponse<T>(response);
     }
 
-    private getHeaders(authToken?: string): Headers {
+    private getHeaders(authToken?: string, contentType?: string): Headers {
         const headers = new Headers();
-        headers.append('Content-Type', 'application/json');
+        // if (contentType) {
+        headers.append('Content-Type', contentType ?? 'application/json');
+        // }
         if (authToken) {
             headers.append('Authorization', `Bearer ${authToken}`);
         }
+        // console.log(headers);
         return headers;
     }
 
