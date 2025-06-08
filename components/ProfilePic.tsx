@@ -13,7 +13,6 @@ export default function ProfilePic({ api }: { api: ApiService }) {
 
   const userContext = useContext(UserContext);
   const user = userContext.user;
-  const jwt = userContext.jwt;
   // const api = new ApiService("")
 
   const [image, setImage] = useState(`data:image/png;base64, ${user?.profilePicBase64}`);
