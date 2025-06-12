@@ -6,12 +6,15 @@ import { Button } from 'react-native-paper';
 import Stopwatch from './Stopwatch';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import TapToTalk from './TapToTalk';
-import SpeakerPic from './SpeakerPic';
+import SpeakerPic from './ui/SpeakerPic';
+import { UserContext } from '@/contexts/UserContext';
 
 export default function SessionView() {
 
   const seshState = useContext(SessionContext);
   const session = seshState.session;
+  const userContext = useContext(UserContext);
+  const user = userContext.user;
   // const created = session?.created!.getTime()!;
   // const now = new Date().getTime();
   // const timeSinceCreation = now - created;
@@ -25,7 +28,7 @@ export default function SessionView() {
 
   if (!session) return;
   // const username = session?.users[0].name
-  const username = "change me"
+  const username = user?.name;
 
   const endSession = () => {
     seshState.finishSession({ duration: duration })

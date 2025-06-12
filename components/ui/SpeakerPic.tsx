@@ -25,7 +25,7 @@ export default function SpeakerPic() {
         <Image
             style={styles.pic}
             // source={{ uri: "https://media.licdn.com/dms/image/v2/C4D03AQGaSSmb55PdQw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1647202343449?e=1751500800&v=beta&t=pwj3a-KrNSlj2iseTu9oy6pJlKq6OChC881vmquRLN8" }}
-            source={require("../assets/images/bike.jpg")}
+            source={require("../../assets/images/bike.jpg")}
         />
         </Pressable>
     )

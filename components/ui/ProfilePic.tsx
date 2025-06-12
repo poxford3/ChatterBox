@@ -1,19 +1,17 @@
 import React, { useContext, useState } from 'react'
 import { Image, StyleSheet, PermissionsAndroid, Platform, Alert, Pressable, TouchableOpacity } from 'react-native'
-import { ThemedView } from './ThemedView'
-import { ThemedText } from './ThemedText';
+import { ThemedView } from '../ThemedView';
+import { ThemedText } from '../ThemedText';
 import { convertImageToBase64 } from '@/hooks/imgToBase64';
 import * as ImagePicker from 'expo-image-picker';
-import { IconSymbol } from './ui/IconSymbol';
+import { IconSymbol } from './IconSymbol';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { UserContext } from '@/contexts/UserContext';
-import { ApiService } from '@/hooks/ApiService';
 
-export default function ProfilePic({ api }: { api: ApiService }) {
+export default function ProfilePic() {
 
   const userContext = useContext(UserContext);
   const user = userContext.user;
-  // const api = new ApiService("")
 
   const [image, setImage] = useState(`data:image/png;base64, ${user?.profilePicBase64}`);
   const iconColor = useThemeColor({}, "text");

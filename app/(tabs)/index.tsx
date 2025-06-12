@@ -1,29 +1,22 @@
 import { useContext, useEffect, useState } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import SessionView from '@/components/SessionView';
 import Stopwatch from '@/components/Stopwatch';
 import { SessionContext } from '@/contexts/SessionContext';
-import { Button } from 'react-native-paper';
+import { Button, ToggleButton } from 'react-native-paper';
+import { TextField } from '@/components/TextField';
+import ExerciseMaker from '@/components/ExerciseMaker';
+import { UserContext } from '@/contexts/UserContext';
+import NoSession from '@/components/NoSession';
 
 export default function HomeScreen() {
 
   const seshState = useContext(SessionContext);
   const session = seshState.session;
-  // console.log('curr sesh', session);
-
-  const NoSession = () => {
-    return (
-      <ThemedView>
-        <ThemedText>
-          No active session, navigate to the `Session Maker` tab to get started!
-        </ThemedText>
-      </ThemedView>
-    )
-  }
-
+  
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}

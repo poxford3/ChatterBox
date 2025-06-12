@@ -8,6 +8,7 @@ import { Button, ToggleButton } from 'react-native-paper';
 import { SessionContext } from '@/contexts/SessionContext';
 import { View } from 'react-native';
 import { UserContext } from '@/contexts/UserContext';
+import ExerciseMaker from '@/components/ExerciseMaker';
 
 export default function SessionMaker() {
 
@@ -53,7 +54,7 @@ export default function SessionMaker() {
                 value={sessionName}
                 placeholder='Session Name'
                 onChangeText={setSessionName}
-                style={{margin: 5}}
+                style={{ margin: 5 }}
             />
             <View style={{justifyContent: 'center', alignItems: 'center', padding: 10, flexDirection: 'row'}}>
                 <ThemedText>Select session type: </ThemedText>
@@ -68,6 +69,7 @@ export default function SessionMaker() {
                     <ToggleButton icon="dumbbell" value='weight' />
                 </ToggleButton.Row>
             </View>
+            {sessionType === "weight" ? <ExerciseMaker /> : null}
             <Button 
                 mode='contained'
                 icon={"plus"}

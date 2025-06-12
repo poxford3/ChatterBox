@@ -84,7 +84,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
             }
             await api.post<Session>("/sessions", newSesh, jwt).then((res) => {
                 setSession(res);
-                router.replace("/");
+                // router.replace("/");
             })
             .catch((err) => {
                 console.error('error creating session: ', err);

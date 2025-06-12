@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ThemedView } from '@/components/ThemedView';
-import ProfilePic from '@/components/ProfilePic';
+import ProfilePic from '@/components/ui/ProfilePic';
 import ActivityProfileBox from '@/components/ActivityProfileBox';
 import { Button } from 'react-native-paper';
 import { UserContext } from '@/contexts/UserContext';
@@ -27,7 +27,7 @@ export default function User() {
         />
       }>
         <ThemedView>
-            <ProfilePic api={api} />
+            <ProfilePic />
             <ActivityProfileBox api={api} />
             <Button
               onPress={userContext.signout}
