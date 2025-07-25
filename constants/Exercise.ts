@@ -1,5 +1,5 @@
 interface Exercise {
-    id: string,
+    id?: string,
     name: string
     reps: number
     sets: number

@@ -36,8 +36,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="session_maker"
         options={{
-          title: 'Session',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="clipboard.fill" color={color} />,
+          title: 'Trends',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="chart.bar.fill" color={color} />,
         }}
       />
       <Tabs.Screen

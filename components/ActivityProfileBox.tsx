@@ -29,7 +29,6 @@ export default function ActivityProfileBox({ api }: { api: ApiService }) {
         } catch (err) {
             console.error("error getting friend count", err);
         }
-
     }
 
     const theme = useContext(ThemeContext);

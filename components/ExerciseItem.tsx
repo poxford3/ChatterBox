@@ -19,28 +19,28 @@ export default function ExerciseItem({
       <View style={styles.row}>
         <TextField
           value={exercise.name ?? ""}
-          onChangeText={(text) => updateExercise(exercise.id, 'name', text)}
+          onChangeText={(text) => updateExercise(exercise.id!, 'name', text)}
           style={styles.txt}
         />
         <TextField
           placeholder='reps'
           keyboardType='numeric'
           value={exercise.reps.toString()}
-          onChangeText={(text) => updateExercise(exercise.id, 'reps', text)}
+          onChangeText={(text) => updateExercise(exercise.id!, 'reps', text)}
           style={styles.txt}
         />
         <TextField
           placeholder='sets'
           keyboardType='numeric'
           value={exercise.sets.toString()}
-          onChangeText={(text) => updateExercise(exercise.id, 'sets', text)}
+          onChangeText={(text) => updateExercise(exercise.id!, 'sets', text)}
           style={styles.txt}
         />
         <TextField
           placeholder='weight'
           keyboardType='numeric'
           value={exercise.weight?.toString()}
-          onChangeText={(text) => updateExercise(exercise.id, 'weight', text)}
+          onChangeText={(text) => updateExercise(exercise.id!, 'weight', text)}
           style={styles.txt}
         />
         <TouchableOpacity onPress={() => removeExercise(exercise)}>

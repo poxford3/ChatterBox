@@ -15,7 +15,16 @@ export default function NoSession() {
     const user = userContext.user;
     const [sessionName, setSessionName] = useState<string>("");
     const [sessionType, setSessionType] = useState<SessionType>(null);
-    const [sessionUsers, setSessionUsers] = useState<number[]>([0]);
+    const [sessionUsers, setSessionUsers] = useState<number[]>([user?.id ?? 0]);
+    const [exercises, setExercises] = useState<Exercise[]>();
+
+    const handleExerciseChanges = (exercises: Exercise[]) => {
+        setExercises(exercises);
+    }
+
+    const removeKey = (arr: Exercise[]) => {
+        return arr.map(({ ['id']: _, ...rest}) => rest);
+    };
 
     const submitForm = () => {
       console.log('submit form');
@@ -23,13 +32,36 @@ export default function NoSession() {
       if (!sessionName) return;
       if (!sessionType) return;
       setSessionUsers([user?.id as number, 2]);
-      seshState.createSession({ 
+      if (
+            exercises?.length === 1 && 
+            exercises[0].name === "" || 
+            sessionType !== "weight"
+        ) {
+            seshState.createSession({ 
+                name: sessionName,
+                type: sessionType,
+                userIds: [user?.id as number, 2],
+        });
+      } else {
+            let exerciseData = removeKey(exercises!);
+            seshState.createSession({ 
+                name: sessionName,
+                type: sessionType,
+                userIds: [user?.id as number, 2],
+                exercises: exerciseData
+        });
+      }
+      console.log("end of form");
+    }
+
+    function printSession(): void {
+        console.log({ 
           name: sessionName,
           type: sessionType,
-          userIds: [user?.id as number, 2]
+          userIds: [user?.id as number, 2],
+          exercises: exercises
           // users: sessionUsers 
       })
-      console.log("end of form");
     }
 
     return (
@@ -56,13 +88,21 @@ export default function NoSession() {
               <ToggleButton icon="dumbbell" value='weight' />
           </ToggleButton.Row>
         </View>
-        {sessionType === "weight" ? <ExerciseMaker /> : null}
+        {sessionType === "weight" ? <ExerciseMaker onExerciseChange={handleExerciseChanges} /> : null}
           <Button 
               mode='contained'
               icon={"plus"}
               onPress={submitForm}
           >
               Create Session
+          </Button>
+        <Button 
+              mode='contained'
+              icon={"plus"}
+              onPress={printSession}
+              style={{marginTop: 5}}
+          >
+              test session data
           </Button>
       </ThemedView>
     )

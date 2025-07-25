@@ -15,6 +15,13 @@ const clearAsyncStorage = async() => {
 
 // SplashScreen.preventAutoHideAsync();
 
+type ExerciseUpload = {
+    name: string
+    reps: number
+    sets: number
+    weight?: number
+}
+
 
 type createSeshProps = {
     name: string,
